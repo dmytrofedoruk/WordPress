@@ -1,0 +1,98 @@
+namespace: wordpress
+wordpress:
+  defines: runnable
+  metadata:
+    name: wordpress
+    description: >-
+      WordPress is a free and open-source content management system written in
+      PHP
+    icon: https://emojiapi.dev/api/v1/globe_with_meridians.svg
+  containers:
+    wordpress:
+      build: .
+  services:
+    http:
+      container: wordpress
+      port: 80
+      host-port: 80
+      publish: false
+      protocol: TCP
+      description: Default port for HTTP connections
+  connections:
+    database:
+      target: wordpress/db
+      service: monk-mysql-db
+  variables:
+    db-name:
+      env: DB_NAME
+      type: string
+      description: The name of the database for WordPress
+      value: '!!!SETME!!!'
+    db-user:
+      env: DB_USER
+      type: string
+      description: Database username
+      value: '!!!SETME!!!'
+    db-password:
+      env: DB_PASSWORD
+      type: string
+      description: Database password
+      value: '!!!SETME-USE-SECRETS!!!'
+    db-host:
+      env: DB_HOST
+      type: string
+      description: Database host
+      value: <- connection-hostname("database")
+    db-port:
+      env: DB_PORT
+      type: string
+      description: Database port
+      value: <- connection-port("database")
+    auth-key:
+      env: AUTH_KEY
+      type: string
+      description: Authentication unique key
+      value: '!!!SETME-USE-SECRETS!!!'
+    secure-auth-key:
+      env: SECURE_AUTH_KEY
+      type: string
+      description: Secure Authentication unique key
+      value: '!!!SETME-USE-SECRETS!!!'
+    logged-in-key:
+      env: LOGGED_IN_KEY
+      type: string
+      description: Logged in unique key
+      value: '!!!SETME-USE-SECRETS!!!'
+    nonce-key:
+      env: NONCE_KEY
+      type: string
+      description: Nonce unique key
+      value: '!!!SETME-USE-SECRETS!!!'
+    auth-salt:
+      env: AUTH_SALT
+      type: string
+      description: Authentication salt
+      value: '!!!SETME-USE-SECRETS!!!'
+    secure-auth-salt:
+      env: SECURE_AUTH_SALT
+      type: string
+      description: Secure Authentication salt
+      value: '!!!SETME-USE-SECRETS!!!'
+    logged-in-salt:
+      env: LOGGED_IN_SALT
+      type: string
+      description: Logged in salt
+      value: '!!!SETME-USE-SECRETS!!!'
+    nonce-salt:
+      env: NONCE_SALT
+      type: string
+      description: Nonce salt
+      value: '!!!SETME-USE-SECRETS!!!'
+db:
+  defines: runnable
+  inherits: monk-mysql/db
+stack:
+  defines: group
+  members:
+    - wordpress/wordpress
+    - wordpress/db
